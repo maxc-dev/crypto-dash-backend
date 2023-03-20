@@ -37,7 +37,9 @@ class WebSocketAdapter<T>(
         }
 
         // open the websocket
-        client.webSocket(method = HttpMethod.Get, host = host, path = path, port = port) {
+        client.webSocket(method = HttpMethod.Get, host = host, path = path, port = port, request = {
+            url.protocol = URLProtocol.WSS
+        }) {
             send(subscription)
             incoming.consumeAsFlow().mapNotNull { it as? Frame.Text }.mapNotNull { it.readText() }.mapNotNull { serializeJson(it) }
                 .collect { emit(it) }

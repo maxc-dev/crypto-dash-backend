@@ -9,11 +9,15 @@ open class PriceModel(val price: Double, val timestamp: Long) : KafkaModel<Price
      */
     override fun encode() = price.toString() + separator + timestamp.toString()
 
-    private val separator = "|"
+    override fun toString() = "$$price @ $timestamp"
 
-    /**
-     * Mapper for decoding the encoded string
-     */
-    val mapper: (String) -> PriceModel =
-        { PriceModel(it.substringBefore(separator).toDouble(), it.substringAfter(separator).toLong()) }
+    companion object {
+        private const val separator = "|"
+
+        /**
+         * Mapper for decoding the encoded string
+         */
+        val mapper: (String) -> PriceModel =
+            { PriceModel(it.substringBefore(separator).toDouble(), it.substringAfter(separator).toLong()) }
+    }
 }

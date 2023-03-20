@@ -1,6 +1,6 @@
 package maxc.dev.provider
 
-class Provider(val name: String, val endpoint: String, val path: String, private val subscription: String) {
+open class Provider(val name: String, val endpoint: String, val path: String, private val subscription: String, val port: Int? = null) {
     /**
      * Formats the subscription string with the symbol
      */
