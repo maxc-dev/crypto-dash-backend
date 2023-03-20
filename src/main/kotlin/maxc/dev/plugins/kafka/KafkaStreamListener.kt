@@ -26,7 +26,8 @@ class KafkaStreamListener<T : KafkaModel<T>>(
         subscription = subscription,
         topic = topic,
         serializer = serializer,
-        kafka = kafkaCredentials
+        kafka = kafkaCredentials,
+        jsonMapper = { it: String -> "{\"result\":$it}" }
     )
     private val consumerService = KafkaConsumerService(
         kafka = kafkaCredentials,

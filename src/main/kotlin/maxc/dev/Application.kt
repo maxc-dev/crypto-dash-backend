@@ -10,8 +10,8 @@ import maxc.dev.plugins.kafka.KafkaTopicManager
 import maxc.dev.plugins.kafka.KafkaCredentials
 import maxc.dev.plugins.kafka.KafkaStreamListener
 import maxc.dev.provider.base.BinanceProvider
-import maxc.dev.provider.price.BinanceAveragePriceModelBase
-import maxc.dev.provider.price.PriceModel
+import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
+import maxc.dev.provider.ticker.PriceTickerModel
 import org.apache.kafka.clients.admin.KafkaAdminClient
 
 fun main() {
@@ -21,7 +21,7 @@ fun main() {
 
 fun Application.module() {
     val binance = BinanceProvider()
-    val symbol = "BTCUSDT"
+    val symbol = "MiniTickerAll"
 
     val kafkaClient = KafkaAdminClient.create(mapOf(
         "bootstrap.servers" to "localhost:9092",
@@ -39,10 +39,10 @@ fun Application.module() {
         endpoint = binance.endpoint,
         port = binance.port,
         path = binance.path,
-        subscription = binance.getSubscriptionForSymbol(symbol),
+        subscription = "",
         topic = KafkaTopicManager.getTopic(binance, symbol),
-        serializer = BinanceAveragePriceModelBase.serializer(),
-        mapper = PriceModel.mapper
+        serializer = BinanceMarketMiniTickerAllBase.serializer(),
+        mapper = PriceTickerModel.mapper
     )
 
     CoroutineScope(Dispatchers.IO).launch {

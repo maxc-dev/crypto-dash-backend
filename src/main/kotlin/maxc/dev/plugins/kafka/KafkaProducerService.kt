@@ -15,6 +15,7 @@ class KafkaProducerService<T : KafkaModel<T>>(
     private val topic: String,
     serializer: KSerializer<*>,
     private val kafka: KafkaCredentials,
+    jsonMapper: ((String) -> String)? = null
 ) {
     private val log: Logger = Logger.getLogger(KafkaProducerService::class.java.name)
 
@@ -24,7 +25,8 @@ class KafkaProducerService<T : KafkaModel<T>>(
         path = path,
         port = port,
         subscription = subscription,
-        serializer = serializer
+        serializer = serializer,
+        jsonMapper = jsonMapper
     )
 
     // create kafka producer
@@ -45,8 +47,10 @@ class KafkaProducerService<T : KafkaModel<T>>(
         kafka.topicManager.createTopicCreateIfAbsent(topic)
         log.info("Subscribing to the web socket and sending the data to the kafka producer for topic $topic")
         // flow the websocket into the kafka producer
-        webSocketConsumer.subscribe().collect {
-            kafkaProducer.send(ProducerRecord(topic, it.encode()))
+        webSocketConsumer.subscribe().collect { entry ->
+            entry.encode().forEach {
+                kafkaProducer.send(ProducerRecord(topic, it))
+            }
         }
     }
 }

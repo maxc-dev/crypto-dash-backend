@@ -1,7 +1,7 @@
 package maxc.dev.plugins.kafka
 
 interface KafkaModel<T> {
-    fun encode(): String
+    fun encode(): List<String>
 
     companion object {
         // decode with mapper
