@@ -17,7 +17,8 @@ class WebSocketAdapter<T>(
     private val path: String,
     private val subscription: String,
     private val serializer: KSerializer<*>,
-    private val port: Int? = null
+    private val port: Int? = null,
+    private val jsonMapper: ((String) -> String)? = null
 ) {
     private val log: Logger = Logger.getLogger(WebSocketAdapter::class.java.name)
 
@@ -29,7 +30,7 @@ class WebSocketAdapter<T>(
      * Creates a flow of data from the web socket and serializes it
      */
     suspend fun subscribe(): Flow<T> = flow {
-        log.info("Subscribing to $host/$path with subscription [$subscription]")
+        log.info("Subscribing to $host/$path${if (port != null) ":$port" else ""}${if (subscription.isNotBlank()) " with subscription [$subscription]" else ""}")
         val client = HttpClient(CIO) {
             install(WebSockets) {
                 contentConverter = KotlinxWebsocketSerializationConverter(Json)
@@ -37,9 +38,12 @@ class WebSocketAdapter<T>(
         }
 
         // open the websocket
-        client.webSocket(method = HttpMethod.Get, host = host, path = path, port = port) {
-            send(subscription)
-            incoming.consumeAsFlow().mapNotNull { it as? Frame.Text }.mapNotNull { it.readText() }.mapNotNull { serializeJson(it) }
+        client.webSocket(method = HttpMethod.Get, host = host, path = path, port = port, request = {
+            url.protocol = URLProtocol.WSS
+        }) {
+            if (subscription.isNotBlank()) send(subscription)
+            incoming.consumeAsFlow().mapNotNull { it as? Frame.Text }.mapNotNull { it.readText() }.map { jsonMapper?.invoke(it) ?: it }
+                .mapNotNull { serializeJson(it) }
                 .collect { emit(it) }
         }
     }
