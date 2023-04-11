@@ -1,4 +1,4 @@
-package maxc.dev.plugins.io.websocket
+package maxc.dev.io.websocket
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
