@@ -2,6 +2,7 @@ val ktorVersion: String by project
 val kotlinVersion: String by project
 val logVersion: String by project
 val kafkaVersion: String = "3.3.1"
+val ktormVersion: String = "3.6.0"
 
 plugins {
     kotlin("jvm") version "1.8.10"
@@ -40,4 +41,7 @@ dependencies {
 
     // kafka
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
+
+    // ktorm
+    implementation("org.ktorm:ktorm-core:${ktormVersion}")
 }
