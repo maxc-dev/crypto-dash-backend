@@ -1,7 +1,7 @@
 package maxc.dev.plugins.kafka
 
 import kotlinx.serialization.KSerializer
-import maxc.dev.plugins.io.websocket.WebSocketAdapter
+import maxc.dev.io.websocket.WebSocketAdapter
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
