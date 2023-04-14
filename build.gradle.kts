@@ -1,6 +1,7 @@
 val ktorVersion: String by project
 val kotlinVersion: String by project
 val logVersion: String by project
+val postgresql_version: String by project
 val kafkaVersion: String = "3.3.1"
 
 plugins {
@@ -31,6 +32,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
+    // PostgreSQL dtb 
+    implementation("org.postgresql:postgresql:$postgresql_version")
 
     // client
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
