@@ -21,7 +21,7 @@ open class PriceTickerModel(val symbol: String, val price: Double, val timestamp
         val mapper: (String) -> PriceTickerModel =
             {
                 val (symbol, price, timestamp) = it.split(separator)
-                PriceTickerModel(symbol, price.toDouble(), timestamp.toLong())
+                PriceTickerModel(symbol, price.toDouble(), timestamp.toLong() / 1000)
             }
     }
 }
