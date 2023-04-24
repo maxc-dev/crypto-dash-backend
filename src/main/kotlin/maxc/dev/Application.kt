@@ -13,6 +13,7 @@ import maxc.dev.provider.base.BinanceProvider
 import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
 import maxc.dev.provider.ticker.PriceTickerModel
 import org.apache.kafka.clients.admin.KafkaAdminClient
+import maxc.dev.dao.DatabaseFactory
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -24,16 +25,17 @@ fun Application.module() {
     val symbol = "MiniTickerAll"
 
     val kafkaClient = KafkaAdminClient.create(mapOf(
-        "bootstrap.servers" to "localhost:9092",
+        "bootstrap.servers" to "192.168.0.73:9092",
         "metadata.max.age.ms" to "1000",
     ))
 
     val kafkaCredentials = KafkaCredentials(
-        server = "localhost:9092",
-        refreshMillis = 200,
+        server = "192.168.0.73:9092",
+        refreshMillis = 1000,
         topicManager = KafkaTopicManager(kafkaClient)
     )
 
+    DatabaseFactory.init(environment.config)
     val consumer = KafkaStreamListener(
         kafkaCredentials = kafkaCredentials,
         endpoint = binance.endpoint,
@@ -44,6 +46,9 @@ fun Application.module() {
         serializer = BinanceMarketMiniTickerAllBase.serializer(),
         mapper = PriceTickerModel.mapper
     )
+
+    print("COMSUMERRRRR")
+    print(consumer)
 
     CoroutineScope(Dispatchers.IO).launch {
         consumer.subscribe().collect {

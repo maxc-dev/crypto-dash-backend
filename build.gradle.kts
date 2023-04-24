@@ -1,6 +1,9 @@
 val ktorVersion: String by project
+val postgresqlVersion: String by project
+val exposedVersion: String by project
 val kotlinVersion: String by project
 val logVersion: String by project
+val postgresql_version: String by project
 val kafkaVersion: String = "3.3.1"
 val ktormVersion: String = "3.6.0"
 
@@ -32,6 +35,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
+    // PostgreSQL dtb 
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     // client
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
