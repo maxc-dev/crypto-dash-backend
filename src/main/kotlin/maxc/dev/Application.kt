@@ -13,8 +13,7 @@ import maxc.dev.provider.base.BinanceProvider
 import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
 import maxc.dev.provider.ticker.PriceTickerModel
 import org.apache.kafka.clients.admin.KafkaAdminClient
-// import maxc.dev.dao.*
-import io.ktor.server.application.*
+import maxc.dev.dao.DatabaseFactory
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -36,10 +35,7 @@ fun Application.module() {
         topicManager = KafkaTopicManager(kafkaClient)
     )
 
-    // DatabaseFactory.init(environment.config)
-    // configureRouting()
-    // configureTemplating()
-
+    DatabaseFactory.init(environment.config)
     val consumer = KafkaStreamListener(
         kafkaCredentials = kafkaCredentials,
         endpoint = binance.endpoint,
