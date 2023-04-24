@@ -12,7 +12,7 @@ import java.time.Duration
 import java.util.logging.Logger
 
 
-fun Application.configureWebSocketApiRoutes(route: String, delay: Long = 1000L, priceChangeManager: PriceChangeManager) {
+fun Application.configureWebSocketApiRoutes(route: String, priceChangeManager: PriceChangeManager) {
     install(WebSockets) {
         contentConverter = KotlinxWebsocketSerializationConverter(Json)
         pingPeriod = Duration.ofSeconds(10)
