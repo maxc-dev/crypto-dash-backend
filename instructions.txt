@@ -1,0 +1,10 @@
+if you remove the gradle file -> gradle wrapper
+this creates the environment
+
+when you use build: . inside docker compose -> you have to REBUILD IT -> docker compose build -> which will execute the dockerfile
+Dockerfile = run on build
+Docker compose up = take BUILT containers and run them
+
+
+To see changes
+./gradlew buildFatJar && docker-compose up --build
