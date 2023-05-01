@@ -4,9 +4,12 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import maxc.dev.db.Asset
-import maxc.dev.db.AssetMapper.toPriceChangeModel
-import maxc.dev.db.AssetTable
+import maxc.dev.dao.Asset
+import maxc.dev.dao.AssetMapper.toPriceChangeModel
+import maxc.dev.dao.AssetTable
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 
@@ -41,13 +44,15 @@ class PriceChangeManager(private val database: Database) {
             val time1d = (time - 86400000) / 1000
             time /= 1000
 
-            // converts data to price model with percent changes
-            val priceChangeModel = database.from(AssetTable).select()
-                .where { AssetTable.timestamp inList listOf(time1s, time1m, time30m, time1h, time12h, time1d) }.orderBy(
-                AssetTable.timestamp.desc()
-            ).map {
-                Asset(it[AssetTable.name]!!, it[AssetTable.price]!!, it[AssetTable.timestamp]!!)
-            }.groupBy { AssetTable.name.desc() }.map { it.value.toPriceChangeModel() }
+            val priceChangeModel = transaction {
+                // converts data to price model with percent changes
+                val result = AssetTable.select { AssetTable.timestamp inList listOf(time1s, time1m, time30m, time1h, time12h, time1d) }.orderBy(
+                    AssetTable.timestamp to SortOrder.DESC
+                ).map {
+                    Asset(it[AssetTable.name], it[AssetTable.price], it[AssetTable.timestamp])
+                }.groupBy { AssetTable.name to SortOrder.DESC }.map { it.value.toPriceChangeModel() }
+                result
+            }
 
             // notifies listeners
             priceListener.forEach { it.onPricesChange(priceChangeModel) }
