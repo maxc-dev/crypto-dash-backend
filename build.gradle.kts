@@ -3,7 +3,6 @@ val postgresqlVersion: String by project
 val exposedVersion: String by project
 val kotlinVersion: String by project
 val logVersion: String by project
-val postgresql_version: String by project
 val kafkaVersion: String = "3.3.1"
 val ktormVersion: String = "3.6.0"
 
@@ -54,6 +53,4 @@ dependencies {
     // ktorm
     implementation("org.ktorm:ktorm-core:${ktormVersion}")
 
-    // postgresql
-    implementation("org.postgresql:postgresql:42.5.4")
 }
