@@ -27,12 +27,12 @@ fun Application.module() {
     val symbol = "MiniTickerAll"
 
     val kafkaClient = KafkaAdminClient.create(mapOf(
-        "bootstrap.servers" to "$localServer:9094",
+        "bootstrap.servers" to "$localServer:9092",
         "metadata.max.age.ms" to "1000",
     ))
 
     val kafkaCredentials = KafkaCredentials(
-        server = "$localServer:9094",
+        server = "$localServer:9092",
         refreshMillis = 1000,
         topicManager = KafkaTopicManager(kafkaClient)
     )
