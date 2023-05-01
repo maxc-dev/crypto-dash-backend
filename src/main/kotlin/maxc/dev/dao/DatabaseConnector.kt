@@ -1,4 +1,4 @@
-package maxc.dev.db
+package maxc.dev.dao
 
 import org.ktorm.database.Database
 

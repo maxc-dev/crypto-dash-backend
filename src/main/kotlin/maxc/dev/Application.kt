@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.*
-import maxc.dev.db.DatabaseConnector
+import maxc.dev.dao.DatabaseConnector
 import maxc.dev.engine.PriceChangeManager
 import maxc.dev.engine.PriceUploader
 import maxc.dev.plugins.kafka.KafkaTopicManager
@@ -14,7 +14,6 @@ import maxc.dev.provider.base.BinanceProvider
 import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
 import maxc.dev.provider.ticker.PriceTickerModel
 import org.apache.kafka.clients.admin.KafkaAdminClient
-import maxc.dev.dao.DatabaseFactory
 
 fun main() {
     embeddedServer(Netty, port = 8000, host = "0.0.0.0", module = Application::module)
@@ -38,7 +37,6 @@ fun Application.module() {
         topicManager = KafkaTopicManager(kafkaClient)
     )
 
-    DatabaseFactory.init(environment.config)
     val consumer = KafkaStreamListener(
         kafkaCredentials = kafkaCredentials,
         endpoint = binance.endpoint,
@@ -49,7 +47,6 @@ fun Application.module() {
         serializer = BinanceMarketMiniTickerAllBase.serializer(),
         mapper = PriceTickerModel.mapper
     )
-
 
     val connector = DatabaseConnector("", "", "")
     val uploader = PriceUploader(connector.database)
