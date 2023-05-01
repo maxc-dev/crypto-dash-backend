@@ -14,6 +14,8 @@ import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
 import maxc.dev.provider.ticker.PriceTickerModel
 import org.apache.kafka.clients.admin.KafkaAdminClient
 import maxc.dev.dao.DatabaseFactory
+val localServer: String by project
+
 
 fun main() {
     embeddedServer(Netty, port = 8000, host = "0.0.0.0", module = Application::module)
@@ -25,12 +27,12 @@ fun Application.module() {
     val symbol = "MiniTickerAll"
 
     val kafkaClient = KafkaAdminClient.create(mapOf(
-        "bootstrap.servers" to "192.168.0.73:9092",
+        "bootstrap.servers" to "$localServer:9094",
         "metadata.max.age.ms" to "1000",
     ))
 
     val kafkaCredentials = KafkaCredentials(
-        server = "192.168.0.73:9092",
+        server = "$localServer:9094",
         refreshMillis = 1000,
         topicManager = KafkaTopicManager(kafkaClient)
     )

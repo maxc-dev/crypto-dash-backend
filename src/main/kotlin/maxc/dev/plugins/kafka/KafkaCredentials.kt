@@ -1,7 +1,8 @@
 package maxc.dev.plugins.kafka
+val localServer: String by project
 
 data class KafkaCredentials(
-    val server: String = "192.168.0.73:9092",
+    val server: String = "$localServer:9094",
     val refreshMillis: Long = 200,
     val topicManager: KafkaTopicManager
 )
