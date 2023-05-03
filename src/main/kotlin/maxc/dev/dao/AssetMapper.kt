@@ -19,7 +19,7 @@ object AssetMapper {
     /**
      * Converts two prices to a percentage change
      */
-    private fun priceToPercent(asset: List<Asset>) = with(asset.first().price) {
-        asset.map { next -> (this - next.price) / this }
+    fun priceToPercent(asset: List<Asset>) = with(asset.first().price) {
+        asset.map { next -> (next.price - this) / this }
     }
 }
