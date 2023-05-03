@@ -7,16 +7,17 @@ import kotlinx.coroutines.launch
 import maxc.dev.dao.Asset
 import maxc.dev.dao.AssetMapper.toPriceChangeModel
 import maxc.dev.dao.AssetTable
+import maxc.dev.util.TimestampUtil
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.ktorm.database.Database
-import org.ktorm.dsl.*
+import java.util.logging.Logger
 
 /**
  * Periodically updates the price of an asset and updates the listener in the WebSocket API
  */
-class PriceChangeManager(private val database: Database) {
+class PriceChangeManager {
+    private val log: Logger = Logger.getLogger(this::class.java.name)
     private val priceListener = mutableListOf<PriceChangeListener>()
 
     @Volatile
@@ -24,6 +25,7 @@ class PriceChangeManager(private val database: Database) {
 
     fun addPriceChangeListener(listener: PriceChangeListener) {
         priceListener.add(listener)
+        log.info("Added listener $listener")
     }
 
     /**
@@ -35,19 +37,18 @@ class PriceChangeManager(private val database: Database) {
         ticking = true
         while (ticking) {
             // gets the times and rounds to the nearest second
-            var time = System.currentTimeMillis()
-            val time1s = (time - 1000) / 1000
-            val time1m = (time - 60000) / 1000
-            val time30m = (time - 1800000) / 1000
-            val time1h = (time - 3600000) / 1000
-            val time12h = (time - 43200000) / 1000
-            val time1d = (time - 86400000) / 1000
-            time /= 1000
+            val time = TimestampUtil.getTimestamp()
+            val time1s = TimestampUtil.getTimestampSince(1, time)
+            val time1m = TimestampUtil.getTimestampSince(60, time)
+            val time30m = TimestampUtil.getTimestampSince(1800, time)
+            val time1h = TimestampUtil.getTimestampSince(3600, time)
+            val time12h = TimestampUtil.getTimestampSince(43200, time)
+            val time1d = TimestampUtil.getTimestampSince(86400, time)
 
             val priceChangeModel = transaction {
                 // converts data to price model with percent changes
-                val result = AssetTable.select { AssetTable.timestamp inList listOf(time1s, time1m, time30m, time1h, time12h, time1d) }.orderBy(
-                    AssetTable.timestamp to SortOrder.DESC
+                val result = AssetTable.select { AssetTable.timestamp inList listOf(time, time1s, time1m, time30m, time1h, time12h, time1d) }.orderBy(
+                    AssetTable.timestamp to SortOrder.ASC
                 ).map {
                     Asset(it[AssetTable.name], it[AssetTable.price], it[AssetTable.timestamp])
                 }.groupBy { AssetTable.name to SortOrder.DESC }.map { it.value.toPriceChangeModel() }
@@ -55,6 +56,7 @@ class PriceChangeManager(private val database: Database) {
             }
 
             // notifies listeners
+            log.info("New change model: $priceChangeModel")
             priceListener.forEach { it.onPricesChange(priceChangeModel) }
 
             // sleeps for a minute

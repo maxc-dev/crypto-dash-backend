@@ -50,10 +50,4 @@ dependencies {
 
     // kafka
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-
-    // ktorm
-    implementation("org.ktorm:ktorm-core:${ktormVersion}")
-
-    // postgresql
-    implementation("org.postgresql:postgresql:42.5.4")
 }

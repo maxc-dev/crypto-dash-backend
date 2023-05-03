@@ -1,6 +1,7 @@
 package maxc.dev.provider.ticker
 
 import maxc.dev.plugins.kafka.KafkaModel
+import maxc.dev.util.TimestampUtil
 
 open class PriceTickerModel(val symbol: String, val price: Double, val timestamp: Long) : KafkaModel<PriceTickerModel> {
     /**
@@ -21,7 +22,7 @@ open class PriceTickerModel(val symbol: String, val price: Double, val timestamp
         val mapper: (String) -> PriceTickerModel =
             {
                 val (symbol, price, timestamp) = it.split(separator)
-                PriceTickerModel(symbol, price.toDouble(), timestamp.toLong() / 1000)
+                PriceTickerModel(symbol, price.toDouble(), TimestampUtil.getTimestamp())
             }
     }
 }
