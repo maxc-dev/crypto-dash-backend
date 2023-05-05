@@ -34,7 +34,6 @@ fun Application.configureWebSocketApiRoutes(route: String, priceChangeManager: P
 
                 // keep socket open, but of a hack to do it though
                 while (true) {
-                    outgoing.send(Frame.Text("Hello"))
                     async { delay(1_000) }.join()
                 }
             }

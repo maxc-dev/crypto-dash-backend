@@ -49,11 +49,4 @@ dependencies {
 
     // kafka
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-<<<<<<< HEAD
-
-    // ktorm
-    implementation("org.ktorm:ktorm-core:${ktormVersion}")
-
-=======
->>>>>>> 2f46769 (Added test cases)
 }
