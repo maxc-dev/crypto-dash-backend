@@ -22,9 +22,8 @@ import org.apache.kafka.clients.admin.KafkaAdminClient
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 fun main() {
-    embeddedServer(Netty, port = 8000, host = "10.77.72.231", module = Application::module)
+    embeddedServer(Netty, port = 8000, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
@@ -33,15 +32,14 @@ fun Application.module() {
     val binance = BinanceProvider()
     val symbol = "MiniTickerAll"
 
-    val localServer = "192.168.85.1"
 
     val kafkaClient = KafkaAdminClient.create(mapOf(
-        "bootstrap.servers" to "$localServer:9092",
+        "bootstrap.servers" to "${System.getenv("SERVER_IP")}:9092",
         "metadata.max.age.ms" to "1000",
     ))
 
     val kafkaCredentials = KafkaCredentials(
-        server = "$localServer:9092",
+        server = "${System.getenv("SERVER_IP")}:9092",
         refreshMillis = 1000,
         topicManager = KafkaTopicManager(kafkaClient)
     )
@@ -76,5 +74,8 @@ fun Application.module() {
         priceChangeManager.start()
     }
 
-    configureWebSocketApiRoutes("ws", priceChangeManager)
+    GlobalScope.launch {
+        configureWebSocketApiRoutes("ws", priceChangeManager)
+    }
+
 }
