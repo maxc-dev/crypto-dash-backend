@@ -36,6 +36,8 @@ class PriceChangeManager {
     fun start() = GlobalScope.launch {
         ticking = true
         while (ticking) {
+            val start = System.currentTimeMillis()
+
             // gets the times and rounds to the nearest second
             val time = TimestampUtil.getTimestamp()
             val time1s = TimestampUtil.getTimestampSince(1, time)
@@ -56,11 +58,12 @@ class PriceChangeManager {
             }
 
             // notifies listeners
-            log.info("New change model: $priceChangeModel")
             priceListener.forEach { it.onPricesChange(priceChangeModel) }
 
             // sleeps for a minute
-            delay(1000L)
+            val end = System.currentTimeMillis()
+            val sleep = 1000L - (end - start)
+            if (sleep > 0) delay(sleep)
         }
     }
 }

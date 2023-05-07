@@ -10,7 +10,6 @@ class PriceUploader {
      * Uploads the price of an asset to the database
      */
     fun uploadPrice(priceTickerModel: PriceTickerModel) {
-        if (priceTickerModel.symbol != "BTCUSDT") return
         transaction {
             AssetTable.insert {
                 it[name] = priceTickerModel.symbol
