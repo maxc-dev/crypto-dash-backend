@@ -22,7 +22,7 @@ SERVER_IP=LOCALIP
 ```
    * Change this environment variable in the `kafka` microservice: 
 ```bash
-KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://LOCALIP:9092`
+KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://LOCALIP:9092
 ```
    * Remember to change the LOCALIP variable to your local ip address
 
