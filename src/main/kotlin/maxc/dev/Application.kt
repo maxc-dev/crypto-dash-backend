@@ -11,13 +11,12 @@ import maxc.dev.dao.DatabaseConnector
 import maxc.dev.engine.PriceChangeManager
 import maxc.dev.engine.PriceUploader
 import maxc.dev.io.websocket.api.configureWebSocketApiRoutes
-import maxc.dev.plugins.kafka.KafkaTopicManager
 import maxc.dev.plugins.kafka.KafkaCredentials
 import maxc.dev.plugins.kafka.KafkaStreamListener
+import maxc.dev.plugins.kafka.KafkaTopicManager
 import maxc.dev.provider.base.BinanceProvider
 import maxc.dev.provider.ticker.BinanceMarketMiniTickerAllBase
 import maxc.dev.provider.ticker.PriceTickerModel
-import maxc.dev.util.TimestampUtil
 import org.apache.kafka.clients.admin.KafkaAdminClient
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -33,10 +32,12 @@ fun Application.module() {
     val symbol = "MiniTickerAll"
 
 
-    val kafkaClient = KafkaAdminClient.create(mapOf(
-        "bootstrap.servers" to "${System.getenv("SERVER_IP")}:9092",
-        "metadata.max.age.ms" to "1000",
-    ))
+    val kafkaClient = KafkaAdminClient.create(
+        mapOf(
+            "bootstrap.servers" to "${System.getenv("SERVER_IP")}:9092",
+            "metadata.max.age.ms" to "1000",
+        )
+    )
 
     val kafkaCredentials = KafkaCredentials(
         server = "${System.getenv("SERVER_IP")}:9092",
@@ -64,9 +65,15 @@ fun Application.module() {
     val uploader = PriceUploader()
     val priceChangeManager = PriceChangeManager()
 
+    val assetFilter = System.getenv("FILTER_ASSETS")
+        .replace("\"", "").split(",").toHashSet()
+
     GlobalScope.launch {
         consumer.subscribe().collect {
-            uploader.uploadPrice(it)
+            // filter assets to only include ones from the env var
+            if (assetFilter.contains(it.symbol)) {
+                uploader.uploadPrice(it)
+            }
         }
     }
 
