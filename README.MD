@@ -12,24 +12,32 @@ gradle wrapper
 ./gradlew buildFatJar
 ```
 3. In the docker-compose file do the following:
-   * Find your `LOCALIP` address:
+* Find your `LOCALIP` address:
+
 ```bash
 MacOS: ipconfig getifaddr en0
 ```
-   * Change this environment variable in the `web` microservice:
+
+* Change this environment variable in the `web` microservice:
+
 ```bash
 SERVER_IP=LOCALIP
 ```
-   * Change this environment variable in the `kafka` microservice: 
+
+* Change this environment variable in the `kafka` microservice: 
+
 ```bash
 KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://LOCALIP:9092
 ```
-   * Remember to change the LOCALIP variable to your local ip address
 
-4. Build Docker Image
+* Remember to change the LOCALIP variable to your local ip address
+
+4. Build Docker Image:
+
 ```bash
 docker compose up --build
 ```
+
 5. Done!
 
 ## Adminer ##
