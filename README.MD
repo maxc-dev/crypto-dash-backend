@@ -4,9 +4,9 @@
 1. Initialise gradle environment -> gradle wrapper
 2. Create Executable JAR for docker -> ./gradlew buildFatJar
 3. In the docker-compose file do the following:
-   a. Find your LOCALIP address -> macOS: ipconfig getifaddr en0
-   b. Change the SEVER_IP to LOCALIP (above)
-   c. Change the KAFKA_ADVERTISED_LISTENERS to PLAINTEXT://LOCALIP:9092 (LOCALIP from step a)
+   >a. Find your LOCALIP address -> macOS: ipconfig getifaddr en0
+   >b. Change the SEVER_IP to LOCALIP (above)
+   >c. Change the KAFKA_ADVERTISED_LISTENERS to PLAINTEXT://LOCALIP:9092 (LOCALIP from step a)
 4. Build Docker Image -> docker compose up --build
 5. Done!
 
