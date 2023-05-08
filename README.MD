@@ -1,14 +1,14 @@
 # Crypto Backend
 
-## Getting started: ##
-
-### VS CODE: ###
+## SETUP IN VS CODE: ##
 1. Initialise gradle environment -> gradle wrapper
 2. Create Executable JAR for docker -> ./gradlew buildFatJar
-3. Build Docker Image -> docker compose up --build
-4. Done!
-
-TODO: Implement EXTERNAL port forwarding, as of now, you have to change the IP in several places to be that of your local IP address
+3. In the docker-compose file do the following:
+   a. Find your LOCALIP address -> macOS: ipconfig getifaddr en0
+   b. Change the SEVER_IP to LOCALIP (above)
+   c. Change the KAFKA_ADVERTISED_LISTENERS to PLAINTEXT://LOCALIP:9092 (LOCALIP from step a)
+4. Build Docker Image -> docker compose up --build
+5. Done!
 
 ### Adminer ###
 
@@ -19,7 +19,6 @@ Adminer is a tool used to inspect databases, useful as a GUI for tables and reco
 
 ### Connection to Websocket ###
 
-Create a JS websocket
-Once the local docker server is running:
-  Use this as the url -> ws://127.0.0.1/ws/data
-It should begin to stream data to the websocket
+Install wscat
+Once the docker image is running -> wscat -c "ws://127.0.0.1/ws/data"
+The stream of crypto prices should then be sent to the terminal
